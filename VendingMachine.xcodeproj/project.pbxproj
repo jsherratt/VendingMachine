@@ -64,9 +64,9 @@
 			children = (
 				97EC979E1C4E80860081754A /* AppDelegate.swift */,
 				97EC97A01C4E80860081754A /* ViewController.swift */,
-				97EC97B01C4E8C7F0081754A /* VendingItemCell.swift */,
 				CDC997EF1C54103A00BCAC22 /* VendingMachine.swift */,
 				CDC997F11C55E0AD00BCAC22 /* DepositController.swift */,
+				97EC97B01C4E8C7F0081754A /* VendingItemCell.swift */,
 				97EC97A21C4E80860081754A /* Main.storyboard */,
 				97EC97A51C4E80860081754A /* Assets.xcassets */,
 				97EC97A71C4E80860081754A /* LaunchScreen.storyboard */,

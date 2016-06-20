@@ -9,24 +9,28 @@
 import UIKit
 
 class DepositController: UIViewController {
-
+    
+    //-----------------------
+    //MARK: View
+    //-----------------------
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
+    //-----------------------
+    //MARK: Button actions
+    //-----------------------
     @IBAction func dismiss() {
         dismissViewControllerAnimated(true, completion: nil)
     }
 
-    
-
+    //-----------------------
+    //MARK: Extra
+    //-----------------------
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
 }
 
 

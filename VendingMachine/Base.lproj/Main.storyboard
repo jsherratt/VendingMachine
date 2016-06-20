@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -179,6 +179,7 @@
                     <connections>
                         <outlet property="balanceLabel" destination="T4d-xZ-BoX" id="teE-Tl-Pi0"/>
                         <outlet property="collectionView" destination="8OG-jm-3JZ" id="40h-Bj-3fx"/>
+                        <outlet property="quantityBtn" destination="xsJ-mF-Vul" id="Irp-pV-zLs"/>
                         <outlet property="quantityLabel" destination="ehp-um-cli" id="sOx-UY-fe6"/>
                         <outlet property="totalLabel" destination="eqM-sa-SEQ" id="SC7-N0-w1h"/>
                     </connections>

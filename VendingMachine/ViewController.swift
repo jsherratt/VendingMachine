@@ -8,51 +8,58 @@
 
 import UIKit
 
-private let reuseIdentifier = "vendingItem"
-private let screenWidth = UIScreen.mainScreen().bounds.width
-
 class ViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
-
-    @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var totalLabel: UILabel!
-    @IBOutlet weak var balanceLabel: UILabel!
-    @IBOutlet weak var quantityLabel: UILabel!
     
+    //-----------------------
+    //MARK: Variables
+    //-----------------------
+    private let reuseIdentifier = "vendingItem"
+    private let screenWidth = UIScreen.mainScreen().bounds.width
     let vendingMachine: VendingMachineType
     var currentSelection: VendingSelection?
     var quantity: Double = 1.0
     
+    //-----------------------
+    //MARK: Outlets
+    //-----------------------
+    @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var totalLabel: UILabel!
+    @IBOutlet weak var balanceLabel: UILabel!
+    @IBOutlet weak var quantityLabel: UILabel!
+    @IBOutlet weak var quantityBtn: UIStepper!
+    
+    //-----------------------
+    //MARK: Required init
+    //-----------------------
     required init?(coder aDecoder: NSCoder) {
+        
         do {
             let dictionary = try PlistConverter.dictionaryFromFile("VendingInventory", ofType: "plist")
             let inventory = try InventoryUnarchiver.vendingInventoryFromDictionary(dictionary)
             self.vendingMachine = VendingMachine(inventory: inventory)
+            
         } catch let error {
+            
             fatalError("\(error)")
         }
         super.init(coder: aDecoder)
     }
     
+    //-----------------------
+    //MARK: View
+    //-----------------------
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
         setupCollectionViewCells()
         setupViews()
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
-    func setupViews() {
-        updateQuantityLabel()
-        updateBalanceLabel()
-    }
-    
-    // MARK: - UICollectionView 
-
+    //-----------------------
+    //MARK: Collection view
+    //-----------------------
     func setupCollectionViewCells() {
+        
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 10, right: 0)
         let padding: CGFloat = 10
@@ -68,6 +75,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! VendingItemCell
         
         let item = vendingMachine.selection[indexPath.row]
@@ -77,6 +85,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        
         updateCellBackgroundColor(indexPath, selected: true)
         reset()
         currentSelection = vendingMachine.selection[indexPath.row]
@@ -96,15 +105,19 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     }
     
     func updateCellBackgroundColor(indexPath: NSIndexPath, selected: Bool) {
+        
         if let cell = collectionView.cellForItemAtIndexPath(indexPath) {
             cell.contentView.backgroundColor = selected ? UIColor(red: 41/255.0, green: 211/255.0, blue: 241/255.0, alpha: 1.0) : UIColor.clearColor()
         }
     }
     
-    // MARK: - Helper Methods
-    
+    //-----------------------
+    //MARK: Button actions
+    //-----------------------
     @IBAction func purchase() {
+        
         if let currentSelection = currentSelection {
+            
             do {
                 try vendingMachine.vend(currentSelection, quantity: quantity)
                 updateBalanceLabel()
@@ -118,39 +131,60 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
                 fatalError("\(error)")
             }
         } else {
-            // FIXME: Alert user to no selection
+            showAlert("No Item Selected", message: "You must select an item to purchase")
         }
     }
     
     @IBAction func updateQuantity(sender: UIStepper) {
+        
         quantity = sender.value
         updateTotalPriceLabel()
         updateQuantityLabel()
     }
     
+    @IBAction func depositFunds() {
+        
+        vendingMachine.deposit(5.00)
+        updateBalanceLabel()
+    }
+    
+    //-----------------------
+    //MARK: Helper functions
+    //-----------------------
+    func setupViews() {
+        
+        updateQuantityLabel()
+        updateBalanceLabel()
+    }
+    
     func updateTotalPriceLabel() {
+        
         if let currentSelection = currentSelection, let item = vendingMachine.itemForCurrentSelection(currentSelection) {
             totalLabel.text = "$\(item.price * quantity)"
         }
     }
     
     func updateQuantityLabel() {
+        
         quantityLabel.text = "\(quantity)"
     }
     
     func updateBalanceLabel() {
+        
         balanceLabel.text = "$\(vendingMachine.amountDeposited)"
     }
     
     func reset() {
+        
         quantity = 1
+        quantityBtn.value = quantity
         updateTotalPriceLabel()
         updateQuantityLabel()
     }
     
     func showAlert(title: String, message: String? = nil, style: UIAlertControllerStyle = .Alert) {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: style)
         
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: style)
         let okAction = UIAlertAction(title: "OK", style: .Default, handler: dismissAlert)
         
         alertController.addAction(okAction)
@@ -159,15 +193,16 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     }
     
     func dismissAlert(sender: UIAlertAction) {
+        
         reset()
     }
     
-    @IBAction func depositFunds() {
-        vendingMachine.deposit(5.00)
-        updateBalanceLabel()
+    //-----------------------
+    //MARK: Extra
+    //-----------------------
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
     }
-    
-    
 }
 
 

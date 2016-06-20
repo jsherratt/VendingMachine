@@ -9,9 +9,11 @@
 import Foundation
 import UIKit
 
-// Protocols
-
+//-----------------------
+//MARK: Protocols
+//-----------------------
 protocol VendingMachineType {
+    
     var selection: [VendingSelection] { get }
     var inventory: [VendingSelection: ItemType] { get set }
     var amountDeposited: Double { get set }
@@ -23,71 +25,33 @@ protocol VendingMachineType {
 }
 
 protocol ItemType {
+    
     var price: Double { get }
     var quantity: Double { get set }
 }
 
-// Error Types
-
+//-----------------------
+//MARK: Error types
+//-----------------------
 enum InventoryError: ErrorType {
+    
     case InvalidResource
     case ConversionError
     case InvalidKey
 }
 
 enum VendingMachineError: ErrorType {
+    
     case InvalidSelection
     case OutOfStock
     case InsufficientFunds(required: Double)
 }
 
-// Helper Classes
-
-class PlistConverter {
-    class func dictionaryFromFile(resource: String, ofType type: String) throws -> [String : AnyObject] {
-        
-        guard let path = NSBundle.mainBundle().pathForResource(resource, ofType: type) else {
-            throw InventoryError.InvalidResource
-        }
-        
-        guard let dictionary = NSDictionary(contentsOfFile: path),
-        let castDictionary = dictionary as? [String: AnyObject] else {
-            throw InventoryError.ConversionError
-        }
-        
-        return castDictionary
-    }
-}
-
-class InventoryUnarchiver {
-    class func vendingInventoryFromDictionary(dictionary: [String : AnyObject]) throws -> [VendingSelection : ItemType] {
-        
-        var inventory: [VendingSelection : ItemType] = [:]
-        
-        for (key, value) in dictionary {
-            if let itemDict = value as? [String : Double],
-            let price = itemDict["price"], let quantity = itemDict["quantity"] {
-                
-                let item = VendingItem(price: price, quantity: quantity)
-                
-                guard let key = VendingSelection(rawValue: key) else {
-                    throw InventoryError.InvalidKey
-                }
-                
-                inventory.updateValue(item, forKey: key)
-                
-            }
-        }
-        
-        return inventory
-        
-    }
-}
-
-
-// Concrete Types
-
+//-----------------------
+//MARK: Vending types
+//-----------------------
 enum VendingSelection: String {
+    
     case Soda
     case DietSoda
     case Chips
@@ -111,9 +75,57 @@ enum VendingSelection: String {
     }
 }
 
+//-----------------------
+//MARK: Struct
+//-----------------------
 struct VendingItem: ItemType {
+    
     let price: Double
     var quantity: Double
+}
+
+//-----------------------
+//MARK: Classes
+//-----------------------
+class PlistConverter {
+    
+    class func dictionaryFromFile(resource: String, ofType type: String) throws -> [String : AnyObject] {
+        
+        guard let path = NSBundle.mainBundle().pathForResource(resource, ofType: type) else {
+            throw InventoryError.InvalidResource
+        }
+        
+        guard let dictionary = NSDictionary(contentsOfFile: path),
+        let castDictionary = dictionary as? [String: AnyObject] else {
+            throw InventoryError.ConversionError
+        }
+        
+        return castDictionary
+    }
+}
+
+class InventoryUnarchiver {
+    
+    class func vendingInventoryFromDictionary(dictionary: [String : AnyObject]) throws -> [VendingSelection : ItemType] {
+        
+        var inventory: [VendingSelection : ItemType] = [:]
+        
+        for (key, value) in dictionary {
+            if let itemDict = value as? [String : Double],
+            let price = itemDict["price"], let quantity = itemDict["quantity"] {
+                
+                let item = VendingItem(price: price, quantity: quantity)
+                
+                guard let key = VendingSelection(rawValue: key) else {
+                    throw InventoryError.InvalidKey
+                }
+                
+                inventory.updateValue(item, forKey: key)
+            }
+        }
+        
+        return inventory
+    }
 }
 
 class VendingMachine: VendingMachineType {
@@ -139,19 +151,25 @@ class VendingMachine: VendingMachineType {
         inventory.updateValue(item, forKey: selection)
         
         let totalPrice = item.price * quantity
+        
         if amountDeposited >= totalPrice {
+            
             amountDeposited -= totalPrice
+            
         } else {
+            
             let amountRequired = totalPrice - amountDeposited
             throw VendingMachineError.InsufficientFunds(required: amountRequired)
         }
     }
     
     func itemForCurrentSelection(selection: VendingSelection) -> ItemType? {
+        
         return inventory[selection]
     }
     
     func deposit(amount: Double) {
+        
         amountDeposited += amount
     }
 }
